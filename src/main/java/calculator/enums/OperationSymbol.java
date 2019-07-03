@@ -1,5 +1,7 @@
 package calculator.enums;
 
+import calculator.domain.Token;
+
 import java.util.Arrays;
 import java.util.function.BiFunction;
 
@@ -25,10 +27,10 @@ public enum OperationSymbol {
         return symbol;
     }
 
-    public static OperationSymbol from(String symbol) {
+    public static OperationSymbol from(Token token) {
 
         return Arrays.stream(OperationSymbol.values())
-                .filter(operationSymbol -> operationSymbol.getSymbol().equals(symbol))
+                .filter(operationSymbol -> operationSymbol.getSymbol().equals(token.getToken()))
                 .findFirst()
                 .orElseThrow(UnsupportedOperationException::new);
     }

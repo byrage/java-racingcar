@@ -1,26 +1,26 @@
 package calculator.enums;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-import java.util.List;
+import calculator.domain.Token;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class OperationSymbolTest {
 
-    @Test
-    @DisplayName("OperationSymbol 변환 테스트")
-    void from() {
-        List<String> supportedOperations = Arrays.asList("+", "-", "*", "/");
-        supportedOperations.forEach(operation ->
-                    assertThatCode(() -> OperationSymbol.from(operation)).doesNotThrowAnyException());
+    @ParameterizedTest(name = "연산기호 변환. `{0}`")
+    @ValueSource(strings = {"+", "-", "*", "/"})
+    void from(String supportedOperation) {
 
-        List<String> unsupportedOperations = Arrays.asList("%", ",", ".", "&", "!");
-        unsupportedOperations.forEach(operation ->
-                      assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> OperationSymbol.from(operation)));
+        assertThatCode(() -> OperationSymbol.from(Token.of(supportedOperation))).doesNotThrowAnyException();
+    }
 
+    @ParameterizedTest(name = "연산기호 변환 시 exception 발생. `{0}`")
+    @ValueSource(strings = {"%", ",", ".", "&", "!"})
+    void fromException(String unsupportedOperation) {
+
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(() -> OperationSymbol.from(Token.of(unsupportedOperation)));
     }
 }

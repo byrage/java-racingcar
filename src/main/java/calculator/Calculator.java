@@ -1,48 +1,26 @@
 package calculator;
 
-import calculator.enums.OperationSymbol;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static calculator.util.StringUtil.isConsistOnlyWhiteSpace;
-import static calculator.validator.Validator.validateInput;
-import static calculator.validator.Validator.validateToken;
+import calculator.domain.Tokens;
+import calculator.utils.StringUtils;
 
 public class Calculator {
 
     public int process(String input) {
 
         validateInput(input);
-        List<String> tokens = tokenize(input);
-        validateToken(tokens);
-
-        return calculate(tokens);
+        Tokens tokens = tokenize(input);
+        return tokens.calculate();
     }
 
-    List<String> tokenize(String input) {
+    Tokens tokenize(String input) {
 
-        return IntStream.range(0, input.length())
-                .mapToObj(input::charAt)
-                .map(String::valueOf)
-                .filter(token -> !isConsistOnlyWhiteSpace(token))
-                .collect(Collectors.toList());
+        return Tokens.of(input);
     }
 
-    public int calculate(List<String> tokens) {
+    private static void validateInput(String input) {
 
-        int result = Integer.valueOf(tokens.get(0));
-
-        for (int i = 1; i < tokens.size(); i += 2) {
-            result = calculate(tokens.get(i), result, Integer.valueOf(tokens.get(i + 1)));
+        if (input == null || StringUtils.isConsistOnlyWhiteSpace(input)) {
+            throw new IllegalArgumentException("입력값이 유효하지 않습니다.");
         }
-
-        return result;
-    }
-
-    private int calculate(String symbol, int num1, int num2) {
-
-        return OperationSymbol.from(symbol).apply(num1, num2);
     }
 }
